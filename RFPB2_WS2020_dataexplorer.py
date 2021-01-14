@@ -15,9 +15,10 @@ from tkinter import messagebox
 
 class DataPlotFrame(tk.Frame):
     COLORS = ['orange','wheat', 'springgreen', 'tomato', 'cornflowerblue', 'orchid']
-    def __init__(self, x, ys, xname, ynames, title, parent, face_color = (.2,.2,.2), text_color = 'white',*args, **kwargs):
+    def __init__(self, x, ys, xname, ynames, title, parent, face_color = (.2,.2,.2), markersize = 3, text_color = 'white',*args, **kwargs):
         tk.Frame.__init__(self, *args,**kwargs)
         self.parent = parent
+        self.markersize_val = markersize
         self.fig = plt.figure(figsize = (8,4), facecolor = face_color)
         plt.rcParams['savefig.facecolor'] = face_color
         self.canvas = FigureCanvasTkAgg(self.fig, master=self) # A tk.DrawingArea.
@@ -43,7 +44,7 @@ class DataPlotFrame(tk.Frame):
                 self.ax.yaxis.set_major_formatter(formatter)
             else:
                 ydate = False
-            self.ax.plot_date(x, ys[0] , '-', ydate = ydate, xdate = xdate, color = 'orange')
+            self.ax.plot_date(x, ys[0] , '-', marker = '.', markersize = self.markersize_val, ydate = ydate, xdate = xdate, color = 'orange')
             self.ax.set_ylabel(ynames[0])
             self.ax.set_xlabel(xname)
         else:
@@ -62,11 +63,11 @@ class DataPlotFrame(tk.Frame):
                 mag_diffs.append(max_mag - mag)
             for y, yname, counter, magdiff in zip(ys,ynames, range(0,len(ynames)), mag_diffs):
                 if magdiff <= 1:
-                    self.ax.plot_date(x, y, '-', ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname)
+                    self.ax.plot_date(x, y, '-', marker = '.', markersize = self.markersize_val, ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname)
                     ylabel = ylabel + '\n' + yname
                 else:
                     y = [val*10**magdiff for val in y]
-                    self.ax.plot_date(x, y, '-', ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname + '*1e' + str(magdiff))
+                    self.ax.plot_date(x, y, '-', marker = '.', markersize = self.markersize_val, ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname + '*1e' + str(magdiff))
                     ylabel = ylabel + '\n' + yname + '*1e' + str(magdiff)
             # self.ax.set_ylabel(ylabel)
             self.ax.set_xlabel(xname)
