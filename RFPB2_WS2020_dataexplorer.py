@@ -44,7 +44,7 @@ class DataPlotFrame(tk.Frame):
                 self.ax.yaxis.set_major_formatter(formatter)
             else:
                 ydate = False
-            self.ax.plot_date(x, ys[0] , '-', marker = '.', markersize = self.markersize_val, ydate = ydate, xdate = xdate, color = 'orange')
+            self.ax.plot_date(x, ys[0] , '-', marker = 'o', markersize = self.markersize_val, ydate = ydate, xdate = xdate, color = 'orange')
             self.ax.set_ylabel(ynames[0])
             self.ax.set_xlabel(xname)
         else:
@@ -63,11 +63,11 @@ class DataPlotFrame(tk.Frame):
                 mag_diffs.append(max_mag - mag)
             for y, yname, counter, magdiff in zip(ys,ynames, range(0,len(ynames)), mag_diffs):
                 if magdiff <= 1:
-                    self.ax.plot_date(x, y, '-', marker = '.', markersize = self.markersize_val, ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname)
+                    self.ax.plot_date(x, y, '-', marker = 'o', markersize = self.markersize_val, ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname)
                     ylabel = ylabel + '\n' + yname
                 else:
                     y = [val*10**magdiff for val in y]
-                    self.ax.plot_date(x, y, '-', marker = '.', markersize = self.markersize_val, ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname + '*1e' + str(magdiff))
+                    self.ax.plot_date(x, y, '-', marker = 'o', markersize = self.markersize_val, ydate = False, xdate = xdate, color = self.COLORS[counter%len(self.COLORS)], label = yname + '*1e' + str(magdiff))
                     ylabel = ylabel + '\n' + yname + '*1e' + str(magdiff)
             # self.ax.set_ylabel(ylabel)
             self.ax.set_xlabel(xname)
