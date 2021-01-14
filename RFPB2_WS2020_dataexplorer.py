@@ -55,7 +55,10 @@ class DataPlotFrame(tk.Frame):
                     self.parent.error_message('Error', 'Y Data cant be of type "datetime" when plotting multiple entries.')
                     return
                 max_value = max(y, key= abs)
-                order = int(math.log(abs(max_value), 10))
+                try:
+                    order = int(math.log(abs(max_value), 10))
+                except:
+                    order = 0
                 magnitudes.append(order)
             max_mag = max(magnitudes, key = abs)
             mag_diffs = []
