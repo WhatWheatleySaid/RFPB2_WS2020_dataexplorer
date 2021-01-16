@@ -99,8 +99,7 @@ class DataExplorerGUI(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, *args,**kwargs)
         #attributes like data:
-        self.data = []
-        self.header = None
+        self.header = []
         self.tabs = []
         self.master = master
         self.current_filename = ''
@@ -177,7 +176,6 @@ class DataExplorerGUI(tk.Frame):
         '''update listbox according to search term'''
         search_term = self.search_text_var.get()
         selected_items_x, selected_items_y = self.get_selected()
-        print(selected_items_x)
         self.x_listbox.delete(0,tk.END)
         self.y_listbox.delete(0,tk.END)
         #search x listbox:
@@ -215,19 +213,22 @@ class DataExplorerGUI(tk.Frame):
         if not dir:
             return
         self.current_filename = dir.split('/')[-1]
-        self.data_dict = {}
+        # self.data_dict = {}
         with open(dir, newline='') as csvfile:
             csvreader = csv.reader(csvfile, delimiter = ';', quotechar = '"')
-            self.header = next(csvreader)
-
-            self.data = []
+            header = next(csvreader)
+            for head in header:
+                if head in self.header:
+                    pass
+                else:
+                    self.header.append(head)
+            data = []
             #init an empty list for each header name
-            for i in range(0,len(self.header)):
-                self.data.append([])
-
+            for i in range(0,len(header)):
+                data.append([])
             #collect data for each header
             for row in csvreader:
-                for i in range(0,len(self.header)):
+                for i in range(0,len(header)):
                     value = row[i].replace(',','.')
                     if value == '':
                         value = 0
@@ -237,9 +238,12 @@ class DataExplorerGUI(tk.Frame):
                         #its a date, convert to datetime
                         #format: 2020-11-28 12:38:02"
                         value = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-                    self.data[i].append(value)
-        for name, num in zip(self.header, range(0,len(self.header))):
-            self.data_dict[name] = num
+                    data[i].append(value)
+        for name, i in zip(header, range(0,len(header))):
+            if name in self.data_dict:
+                pass
+            else:
+                self.data_dict[name] = data[i]
         self.x_listbox.delete(0,tk.END)
         self.y_listbox.delete(0,tk.END)
         self.x_listbox.insert(0, *self.header)
@@ -254,15 +258,15 @@ class DataExplorerGUI(tk.Frame):
             return
         x_selection = x_selection[0]
         xname = self.x_listbox.get(x_selection)
-        x_selection = self.data_dict[xname]
-        x = self.data[x_selection]
+        x = self.data_dict[xname]
+        # x = self.data[x_selection]
         ynames = []
         ys = []
         for sel in y_selection:
             yname = self.y_listbox.get(sel)
             ynames.append(yname)
-            sel = self.data_dict[yname]
-            ys.append(self.data[sel])
+            data = self.data_dict[yname]
+            ys.append(data)
         if len(ynames) == 1:
             self.plot_notebook.add(DataPlotFrame(x,ys, xname, ynames, 'Data from ' + self.current_filename, self), text = ynames[0] +' over ' + xname)
         else:
